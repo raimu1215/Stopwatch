@@ -1,70 +1,50 @@
-(function(){
-    'use strict';
+const time = document.getElementById('time');
+const startButton = document.getElementById('start');
+const stopButton = document.getElementById('stop');
+const resetButton = document.getElementById('reset');
 
-    var timer = document.getElementById('timer');
-    var start = document.getElementById('start');
-    var stop = document.getElementById('stop');
-    var reset = document.getElementById('reset');
+// 開始時間
+let startTime;
+// 停止時間
+let stopTime = 0;
+// タイムアウトID
+let timeoutID;
 
-    var startTime;
+// 時間を表示する関数
+function displayTime() {
+  const currentTime = new Date(Date.now() - startTime + stopTime);
+  const h = String(currentTime.getHours()-1).padStart(2, '0');
+  const m = String(currentTime.getMinutes()).padStart(2, '0');
+  const s = String(currentTime.getSeconds()).padStart(2, '0');
+  const ms = String(currentTime.getMilliseconds()).padStart(3, '0');
 
-    var elapsedTime = 0;
+  time.textContent = `${h}:${m}:${s}.${ms}`;
+  timeoutID = setTimeout(displayTime, 10);
+}
 
-    var timerId;
+// スタートボタンがクリックされたら時間を進める
+startButton.addEventListener('click', () => {
+  startButton.disabled = true;
+  stopButton.disabled = false;
+  resetButton.disabled = true;
+  startTime = Date.now();
+  displayTime();
+});
 
-    var timeToadd = 0;
+// ストップボタンがクリックされたら時間を止める
+stopButton.addEventListener('click', function() {
+  startButton.disabled = false;
+  stopButton.disabled = true;
+  resetButton.disabled = false;
+  clearTimeout(timeoutID);
+  stopTime += (Date.now() - startTime);
+});
 
-    function updateTimetText(){
-
-        //(分)
-        var m = Math.floor(elapsedTime / 60000);
-
-        //(秒)
-        var s = Math.floor(elapsedTime % 60000 / 1000);
-
-        //(ミリ秒)
-        var ms = elapsedTime % 1000;
-
-        m = ('0' + m).slice(-2); 
-        s = ('0' + s).slice(-2);
-        ms = ('0' + ms).slice(-3);
-
-        timer.textContent = m + ':' + s + ':' + ms;
-    }
-
-    function countUp(){
-
-        timerId = setTimeout(function(){
-
-            elapsedTime = Date.now() - startTime + timeToadd;
-            updateTimetText()
-
-            countUp();
-
-        },10);
-    }
-
-    start.addEventListener('click',function(){
-
-        startTime = Date.now();
-
-        countUp();
-    });
-
-    stop.addEventListener('click',function(){
-
-       clearTimeout(timerId);
-
-       timeToadd += Date.now() - startTime;
-    });
-
-    reset.addEventListener('click',function(){
-
-        elapsedTime = 0;
-
-        timeToadd = 0;
-
-        updateTimetText();
-
-    });
-})();
+// リセットボタンがクリックされたら時間を0に戻す
+resetButton.addEventListener('click', function() {
+  startButton.disabled = false;
+  stopButton.disabled = true;
+  resetButton.disabled = true;
+  time.textContent = '00:00:00.000';
+  stopTime = 0;
+});
