@@ -1,50 +1,70 @@
-const time = document.getElementById('time');
-const startButton = document.getElementById('start');
-const stopButton = document.getElementById('stop');
-const resetButton = document.getElementById('reset');
+var startButton;    // startボタン
+var stopButton;     // stopボタン
+var resetButton;    // resetボタン
+var showTime;       // 表示時間
 
-// 開始時間
-let startTime;
-// 停止時間
-let stopTime = 0;
-// タイムアウトID
-let timeoutID;
+var timer;              // setinterval, clearTimeoutで使用
+var startTime;          // 開始時間
+var elapsedTime = 0;    // 経過時間
+var holdTime = 0;       // 一時停止用に時間を保持
 
-// 時間を表示する関数
-function displayTime() {
-  const currentTime = new Date(Date.now() - startTime + stopTime);
-  const h = String(currentTime.getHours()-1).padStart(2, '0');
-  const m = String(currentTime.getMinutes()).padStart(2, '0');
-  const s = String(currentTime.getSeconds()).padStart(2, '0');
-  const ms = String(currentTime.getMilliseconds()).padStart(3, '0');
-
-  time.textContent = `${h}:${m}:${s}.${ms}`;
-  timeoutID = setTimeout(displayTime, 10);
+window.onload = function () {
+    startButton = document.getElementById("start");
+    stopButton = document.getElementById("stop");
+    resetButton = document.getElementById("reset");
+    showTime = document.getElementById("time");
 }
 
-// スタートボタンがクリックされたら時間を進める
-startButton.addEventListener('click', () => {
-  startButton.disabled = true;
-  stopButton.disabled = false;
-  resetButton.disabled = true;
-  startTime = Date.now();
-  displayTime();
-});
+// スタートボタン押下時
+function start(){
+    // 開始時間を現在の時刻に設定
+    startTime = Date.now();
 
-// ストップボタンがクリックされたら時間を止める
-stopButton.addEventListener('click', function() {
-  startButton.disabled = false;
-  stopButton.disabled = true;
-  resetButton.disabled = false;
-  clearTimeout(timeoutID);
-  stopTime += (Date.now() - startTime);
-});
+    // 時間計測
+    measureTime();
 
-// リセットボタンがクリックされたら時間を0に戻す
-resetButton.addEventListener('click', function() {
-  startButton.disabled = false;
-  stopButton.disabled = true;
-  resetButton.disabled = true;
-  time.textContent = '00:00:00.000';
-  stopTime = 0;
-});
+    startButton.disabled = true;
+    stopButton.disabled = false;
+    resetButton.disabled = false;
+}
+
+// ストップボタン押下時
+function stop(){
+    // タイマー停止
+    clearInterval(timer);
+
+    // 停止時間を保持
+    holdTime += Date.now() - startTime;
+
+    startButton.disabled = false;
+    stopButton.disabled = true;
+    resetButton.disabled = false;
+}
+
+// リセットボタン押下時
+function reset(){
+    // タイマー停止
+    clearInterval(timer);
+
+    // 変数、表示を初期化
+    elapsedTime = 0;
+    holdTime = 0;
+    showTime.textContent = "00:00.000";
+
+    startButton.disabled = false;
+    stopButton.disabled = true;
+    resetButton.disabled = true;
+}
+
+// 時間を計測（再帰関数）
+function measureTime() {
+    // タイマーを設定
+    timer = setTimeout(function () {
+        // 経過時間を設定し、画面へ表示
+        elapsedTime = Date.now() - startTime + holdTime;
+        showTime.textContent = new Date(elapsedTime).toISOString().slice(14, 23);
+        
+        // 関数を呼び出し、時間計測を継続する
+        measureTime();
+    }, 10);
+}

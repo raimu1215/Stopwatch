@@ -3,7 +3,7 @@
 html, body {
   font-family: 'Roboto mono';
   font-size: 16px;
-  background-color: #1e90ff;
+  background-color: #deb887;
 }
 
 h1 {
@@ -22,7 +22,7 @@ h1 {
 }
 
 #time {
-  color: #1e90ff;
+  color: #B78D4A;
   font-size: 3rem;
   text-align: center;
   padding: 1rem;
@@ -31,9 +31,15 @@ h1 {
   margin: .5rem;
 }
 
-#buttons {
-  font-size: 3rem;
-  text-align: center;
+button {
+  padding: 20px 0;
+    font-size: 30px;
+    display: inline-block;
+    padding: .8rem 1.6rem;
+    border: none;
+    color: #FFF;
+    background-color: #B78D4A;
+    border-radius: 15px;
 }
 
 #start, #stop, #reset {

@@ -10,10 +10,10 @@
       <h1>Stopwatch</h1>
   <div id="container">
     <div id="time">00:00:00.000</div>
-    <div id="buttons">
-      <input id="start" type="button" value="start">
-      <input id="stop" type="button" value="stop">
-      <input id="reset" type="button" value="reset">
+    <div>
+      <button id="start" onclick="start()">Start</button>
+      <button id="stop" onclick="stop()" disabled>Stop</button>
+      <button id="reset" onclick="reset()" disabled>Reset</button>
     </div>
   </div>  
   <script src='main.js'></script>
